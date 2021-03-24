@@ -30,10 +30,19 @@ type Query {
 
 type Mutation {
   addTodo(addTodoInput: TodoAddInput): Todo!
+  updateTodo(id: Int!, updateTodoInput: TodoUpdateInput!): Todo!
+  deleteTodo(id: Int!): Todo!
 }
 
 input TodoAddInput {
   name: String!
   content: String!
   userId: Int!
+}
+
+input TodoUpdateInput {
+  name: String
+  content: String
+  userId: Int
+  status: TodoStatusEnum
 }
