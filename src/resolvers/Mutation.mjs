@@ -1,7 +1,7 @@
 export const Mutation = {
-  addTodo: (parent, { addTodoInput }, { db }, infos) => {
+  addTodo: (parent, { addTodoInput }, { db, pubsub }, infos) => {
     // Je dois tout d'abord vérifier que le userId est correct
-    if (!existInArray(db.users, id, addTodoInput.userId)) {
+    if (!existInArray(db.users, "id", addTodoInput.userId)) {
       //Si ko
       // déclencher une erreur
       throw new Error(`Le user d'id ${addTodoInput.userId} n'existe pas`);
@@ -12,11 +12,12 @@ export const Mutation = {
       // ajouter le nouveau todo dans la bd
       // retourner le nouveau todo
       const newTodo = {
-        id: db.todos[db.todos.length - 1].id + 1,
+        id: db.todos.length ? db.todos[db.todos.length - 1].id + 1 : 1,
         status: "WAITING",
         ...addTodoInput,
       };
       db.todos.push(newTodo);
+      pubsub.publish("todo", { todo: { todo: newTodo, mutation: "ADD" } });
       return newTodo;
     }
     //sinon
@@ -25,7 +26,7 @@ export const Mutation = {
     // ajouter le nouveau todo dans la bd
     // retourner le nouveau todo
   },
-  updateTodo: (parent, { id, updateTodoInput }, { db }, infos) => {
+  updateTodo: (parent, { id, updateTodoInput }, { db, pubsub }, infos) => {
     // il faudra vérifier qu'on a un userId et que ce userId correspond à un user
     if (
       updateTodoInput.userId &&
@@ -41,16 +42,18 @@ export const Mutation = {
         for (let key in updateTodoInput) {
           todo[key] = updateTodoInput[key];
         }
+        pubsub.publish("todo", { todo: { todo, mutation: "UPDATE" } });
+        return todo;
       }
-      return todo;
     }
   },
-  deleteTodo: (parent, { id }, { db }, infos) => {
+  deleteTodo: (parent, { id }, { db, pubsub }, infos) => {
     const indexTodo = db.todos.findIndex((todo) => todo.id === id);
     if (indexTodo === -1) {
       throw new Error("Todo innexistant");
     } else {
       const [todo] = db.todos.splice(indexTodo, 1);
+      pubsub.publish("todo", { todo: { todo, mutation: "DELETE" } });
       return todo;
     }
   },
