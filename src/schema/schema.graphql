@@ -27,3 +27,13 @@ type Query {
   getUsers: [User]!
   getUserById(id: Int): User!
 }
+
+type Mutation {
+  addTodo(addTodoInput: TodoAddInput): Todo!
+}
+
+input TodoAddInput {
+  name: String!
+  content: String!
+  userId: Int!
+}

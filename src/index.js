@@ -1,9 +1,10 @@
 import { GraphQLServer } from "graphql-yoga";
 import { Query } from "./resolvers/Query.mjs";
+import { Mutation } from "./resolvers/Mutation.mjs";
 import { Todo } from "./resolvers/Todo.mjs";
 import { User } from "./resolvers/User.mjs";
 
-import {db} from "./db/db.mjs";
+import { db } from "./db/db.mjs";
 // ... or using `require()`
 // const { GraphQLServer } = require('graphql-yoga')
 
@@ -15,14 +16,15 @@ const typeDefs = "src/schema/schema.graphql";
 const resolvers = {
   Query,
   Todo,
-  User
+  User,
+  Mutation,
 };
 
 const server = new GraphQLServer({
   typeDefs,
   resolvers,
   context: {
-    db
-  }
+    db,
+  },
 });
 server.start(() => console.log("Techwall Server is running on localhost:4000"));
