@@ -30,4 +30,19 @@ const server = new GraphQLServer({
     pubsub,
   },
 });
-server.start(() => console.log("Techwall Server is running on localhost:4000"));
+
+const t  = {
+  "query": "query todos($limit: Int!) { id name }",
+  "operationName": "getTodos",
+  "variables": { "limit": "5" }
+}
+
+const options = {
+  cors: {
+    origin: "http://localhost:4200",
+    credentials: true, // <-- REQUIRED backend setting
+  },
+};
+server.start(options, () =>
+  console.log("Techwall Server is running on localhost:4000")
+);
